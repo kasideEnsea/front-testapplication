@@ -1,9 +1,5 @@
 export interface UserModel {
     id: number;
+    email: string;
     name: string;
-    login: string;
-    userPhotoUrl: string;
-    about: string;
-    password: string;
-    //other fields here
 }

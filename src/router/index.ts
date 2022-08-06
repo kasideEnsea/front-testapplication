@@ -1,67 +1,58 @@
 import Vue from 'vue'
 import VueRouter, {RouteConfig} from 'vue-router'
 import {SecurityService} from "@/security/SecurityService";
-
-const TasksView = () => import("@/views/TasksView/TasksView.vue");
-const ProfileView = () => import("@/views/ProfileView/ProfileView.vue");
-const EventView = () => import("@/views/EventView/EventView.vue");
+import NoValidView from "@/views/NoValidView/NoValidView.vue";
+import ValidView from "@/views/ValidView/ValidView.vue";
+import MainView from "@/views/MainView/MainView.vue";
 const LoginView = () => import( "@/views/LoginView/LoginView.vue");
 const RegistrationView = () => import("@/views/RegistrationView/RegistrationView.vue");
 const PageNotFoundView = () => import( "@/views/PageNotFoundView/PageNotFoundView.vue");
-const EditView = () => import("@/views/EditView/EditView.vue")
+
 
 Vue.use(VueRouter);
 
 const routes: RouteConfig[] = [
     {
         path: '/',
-        name: 'EventView',
-        component: EventView,
+        name: 'MainView',
+        component: MainView,
         meta: {
             authorized: true
         }
-    }, {
-        path: '/tasks/:userId?',
-        name: 'TasksView',
-        component: TasksView,
-        meta: {
-            authorized: true
-        }
-    }, {
-        path: '/profile/:userId?',
-        name: 'ProfileView',
-        component: ProfileView,
-        meta: {
-            authorized: true
-        }
-    }, {
-        path: '/editProfile',
-        name: 'EditView',
-        component: EditView,
-        meta: {
-            authorized: true
-        }
-    },{
+    },
+    {
         path: '/login',
         name: 'LoginView',
         component: LoginView
-    }, {
+    },
+    {
         path: '/registration',
         name: 'RegistrationView',
         component: RegistrationView
     },
     {
+        path: '/novalid',
+        name: 'NoValidView',
+        component: NoValidView,
+        meta: {
+            authorized: false
+        }
+    },
+    {
+        path: '/:userId?/:code?',
+        name: 'ValidView',
+        component: ValidView
+    },{
         path: '/logout',
         beforeEnter: (to, from, next) => {
             SecurityService.clearToken();
             next('/login');
         }
-    },
-    {
+    }, {
         path: '/*',
         name: 'PageNotFoundView',
         component: PageNotFoundView
-    }
+    },
 ];
 
 const router = new VueRouter({
@@ -71,11 +62,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.meta.authorized && !SecurityService.isAuthorized()
-        || to.meta.admin && !SecurityService.isAdmin()
-        || to.meta.moderator && !SecurityService.isModerator()
-        || to.meta.moderatorOrAdmin && !SecurityService.isModerator() && !SecurityService.isAdmin()
-        || to.meta.user && !SecurityService.isUser()) {
+    if (to.meta.authorized && !SecurityService.isAuthorized()){
         next('/login');
     } else next()
 });

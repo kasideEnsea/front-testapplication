@@ -1,5 +1,4 @@
 export interface RegistrationOptions {
-    name: string;
-    login: string;
+    email: string;
     password: string;
 }
