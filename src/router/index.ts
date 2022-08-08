@@ -41,7 +41,12 @@ const routes: RouteConfig[] = [
     {
         path: '/:userId?/:code?',
         name: 'ValidView',
-        component: ValidView
+        component: ValidView,
+        /*children: [
+            { path: '/:code?',
+                name: 'ValidView',
+                component: ValidView },
+        ]*/
     },{
         path: '/logout',
         beforeEnter: (to, from, next) => {
