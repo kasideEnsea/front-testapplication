@@ -7,7 +7,11 @@ export class QuestionService {
     private static base = `${root}/question`;
 
     public static async addOption(option: Option, id: number): Promise<Question> {
-        return axios.post(`${this.base}/add/${id}`, option).then(value => value.data);
+        return axios.post(`${this.base}/addopt/${id}`, option).then(value => value.data);
+    }
+
+    public static async addQuestion(question: Question, id: number): Promise<Question> {
+        return axios.post(`${this.base}/add/${id}`, question).then(value => value.data);
     }
 
     public static async deleteQuestion(id: number) {

@@ -8,6 +8,14 @@
                 color="secondary"
                 :rules="[(v => !!v || $t('name_required'))]"
         />
+        <v-btn class="right" color="secondary">
+            <v-img
+                    max-height="20"
+                    max-width="20"
+                    src="/plus.png"
+                    @click="addQuestion"
+            />
+        </v-btn>
         <course-list v-if="options.questions" :questions="options.questions"/>
         <v-btn
                 @click="save"
@@ -27,6 +35,7 @@
     import QuestionList from "@/components/QuestionList/QuestionList.vue";
     import {Question} from "@/models/Question";
     import {Option} from "@/models/Option";
+    import {QuestionService} from "@/services/QService";
 
     @Component({
         components: {QuestionList}
@@ -45,7 +54,7 @@
 
         addQuestion(): void {
             const testId = +this.$route.params.testId;
-            TestService.addTest(this.newQuestion, testId);
+            QuestionService.addQuestion(this.newQuestion, testId);
             this.$router.push({ path: `/test/${this.$route.params.testId}` });
         }
 
@@ -74,5 +83,12 @@
 </script>
 
 <style scoped>
-
+    .right {
+        max-width: 600px;
+        padding: 10px;
+        display:inline-block;
+        margin: 20px auto;
+        margin-right: 20px;
+        float: right;
+    }
 </style>
