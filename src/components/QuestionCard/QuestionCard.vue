@@ -24,10 +24,10 @@
                     @click="addEmptyOption"
             />
         </v-btn>
-        <template v-for="opt in question.options">
+        <div v-for="opt in question.options" :key="opt.id">
             <input type="checkbox" v-bind:value="opt" v-model="opt.isCorrect">
             <label>{{opt.text}}</label><br>
-        </template>
+        </div>
     </v-card>
 </template>
 
