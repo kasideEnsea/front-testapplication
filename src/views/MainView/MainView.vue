@@ -1,54 +1,39 @@
 <i18n src="./MainView.yaml"/>
 <template>
-    <div class="mx-auto" style="max-width: 1000px;">
+    <div class="mx-auto fh" style="max-width: 1000px;">
         <h1>{{$t('title')}}</h1>
+        <course-list v-if="feedPromise" :tests="feedPromise"/>
+        <v-btn
+                @click="addTest"
+                class="white--text"
+                color="primary"
+                raised>
+            {{$t('add')}}
+        </v-btn>
     </div>
 </template>
 
 <script lang="ts">
-    import {State} from "@/enum/State";
-    import {AuthService} from "@/security/AuthService";
-    import {Vue, Watch} from "vue-property-decorator";
+    import {Component, Vue, Watch} from "vue-property-decorator";
     import {TitleService} from "@/services/TitleService";
-    import Component from "vue-class-component";
+    import TestList from "@/components/TestList/TestList.vue";
+    import {Test} from "@/models/Test";
+    import {TestService} from "@/services/TestService";
 
-    @Component({})
-    export default class MainView extends Vue {
-        private state = State.None;
-        private errCode = 0;
-        private errorDict!: Record<number, string>
-        private valid = false;
+    @Component({
+        components: {TestList}
+    })
+    export default class CourseView extends Vue {
+        courses: Test[] = [];
+        feedPromise: Promise<Test[]> | null = null;
 
-        get getErrorDescription(): string {
-            const error = this.errorDict[this.errCode];
-            if (error)
-                return error;
-            else
-                return this.$t('error.default', {errCode: this.errCode}).toString();
-        }
-
-        get isLoading(): boolean {
-            return this.state == State.Loading;
-        }
-
-        get isSuccess(): boolean {
-            return this.state == State.Success;
-        }
-
-        get isError(): boolean {
-            return this.state == State.Error;
-        }
-
-        get titleString(): string {
-            return 'LinGo';
+        addTest(): void {
+            this.$router.push({ path: `/add/course` });
         }
 
         created() {
+            this.feedPromise = TestService.getTests();
             this.setTitle();
-            this.errorDict = {
-                401: this.$t('error.401').toString(),
-                403: this.$t('error.403').toString(),
-            };
         }
 
         @Watch("$i18n.locale")
@@ -56,15 +41,9 @@
             TitleService.setTitle(this.$t('title').toString());
         }
 
-        get submitDisabled(): boolean {
-            return this.isLoading || !this.valid;
-        }
     }
 </script>
 
 <style scoped>
-    .reg {
-        margin-left: auto;
-        margin-right: auto;
-    }
+
 </style>

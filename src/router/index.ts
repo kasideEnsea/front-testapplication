@@ -4,6 +4,7 @@ import {SecurityService} from "@/security/SecurityService";
 import NoValidView from "@/views/NoValidView/NoValidView.vue";
 import ValidView from "@/views/ValidView/ValidView.vue";
 import MainView from "@/views/MainView/MainView.vue";
+import TestView from "@/views/TestView/TestView.vue";
 const LoginView = () => import( "@/views/LoginView/LoginView.vue");
 const RegistrationView = () => import("@/views/RegistrationView/RegistrationView.vue");
 const PageNotFoundView = () => import( "@/views/PageNotFoundView/PageNotFoundView.vue");
@@ -42,18 +43,23 @@ const routes: RouteConfig[] = [
         path: '/:userId?/:code?',
         name: 'ValidView',
         component: ValidView,
-        /*children: [
-            { path: '/:code?',
-                name: 'ValidView',
-                component: ValidView },
-        ]*/
-    },{
+    },
+    {
+        path: '/test/:id?',
+        name: 'TestView',
+        component: TestView,
+        meta: {
+            authorized: true
+        }
+    },
+    {
         path: '/logout',
         beforeEnter: (to, from, next) => {
             SecurityService.clearToken();
             next('/login');
         }
-    }, {
+    },
+    {
         path: '/*',
         name: 'PageNotFoundView',
         component: PageNotFoundView
