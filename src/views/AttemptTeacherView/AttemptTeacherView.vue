@@ -1,4 +1,4 @@
-<i18n src="./TestStudentView.yaml"/>
+<i18n src="./AttemptTeacherView.yaml"/>
 <template>
     <div class="mx-auto fh" style="max-width: 1000px;">
         <div v-if="visible">
@@ -33,7 +33,7 @@
     @Component({
         components: {EmptyQuestionList}
     })
-    export default class TestStudentView extends Vue {
+    export default class AttemptTeacherView extends Vue {
         private state = State.None;
         private visible = false;
         private options = new class implements Test {
