@@ -5,7 +5,7 @@ import {Test} from "@/models/Test";
 export class TestService {
     private static base = `${root}/test`;
 
-    public static async addTest(test: Test, id: number): Promise<Test> {
+    public static async addTest(test: Test): Promise<Test> {
         return axios.post(`${this.base}/add`, test).then(value => value.data);
     }
 

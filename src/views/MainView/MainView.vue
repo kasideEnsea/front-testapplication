@@ -2,7 +2,7 @@
 <template>
     <div class="mx-auto fh" style="max-width: 1000px;">
         <h1>{{$t('title')}}</h1>
-        <course-list v-if="feedPromise" :tests="feedPromise"/>
+        <test-list v-if="feedPromise" :tests="feedPromise"/>
         <v-btn
                 @click="addTest"
                 class="white--text"
@@ -24,11 +24,11 @@
         components: {TestList}
     })
     export default class CourseView extends Vue {
-        courses: Test[] = [];
+        tests: Test[] = [];
         feedPromise: Promise<Test[]> | null = null;
 
         addTest(): void {
-            this.$router.push({ path: `/add/course` });
+            this.$router.push({ path: `/add/test` });
         }
 
         created() {

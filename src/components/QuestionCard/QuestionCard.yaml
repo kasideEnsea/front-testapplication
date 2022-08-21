@@ -1,16 +1,7 @@
 ru:
-  title: Редактирование профиля
-  form:
-    label:
-      name:
-    error:
-      name_required: Необходимо ввести имя
-      login_required: Необходимо ввести логин
-      password_mismatch: Пароли не совпадают
-    button: Подтвердить изменения
+  question: Текст вопроса
+  option: Вариант ответа
+  error:
+    text_required: Необходимо ввести текст вопроса
   success: Изменеия приняты!
   loading: Загрузка...
-  error:
-    count_required: Введите название
-    default: Произошла непредвиденная ошибка ({errCode})
-

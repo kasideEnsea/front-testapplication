@@ -2,7 +2,7 @@
 <template>
     <div style="max-width: 800px">
         <template v-if="questions">
-            <question-card :test-id="testId" :question="question" :key="question.id" v-for="question in questions"/>
+            <empty-question-card :question="question" :key="question.id" v-for="question in questions"/>
         </template>
         <p v-if="isSuccess && !data.length">
             {{$t('nothing_found')}}
@@ -22,20 +22,19 @@
 <script lang="ts">
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import {State} from "@/enum/State";
-    import QuestionCard from "@/components/QuestionCard/QuestionCard.vue";
     import {Question} from "@/models/Question";
+    import EmptyQuestionCard from "@/components/EmptyQuestionCard/EmptyQuestionCard.vue";
 
 
     @Component({
-        components: {QuestionCard}
+        components: {EmptyQuestionCard}
     })
-    export default class QuestionList extends Vue {
+    export default class EmptyQuestionList extends Vue {
         state: State = State.None;
         page = 1;
         toLoad = 1;
         totalPages = 0;
         @Prop() questions!: Question[];
-        @Prop() testId: number | undefined;
         get isLoading(): boolean {
             return this.state == State.Loading;
         }

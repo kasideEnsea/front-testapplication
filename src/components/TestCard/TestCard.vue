@@ -1,5 +1,6 @@
 <template>
     <v-card v-if="visible">
+        <v-label class="deck-name">{{card.front_word}}</v-label>
         <span class="test">
             <router-link :to="`/test/${test.id}`" class="test-name">{{test.name}}</router-link>
         </span>
@@ -9,14 +10,6 @@
                     max-width="20"
                     src="/link.png"
                     @click="link"
-            />
-        </v-btn>
-        <v-btn class="right" color="secondary">
-            <v-img
-                    max-height="20"
-                    max-width="20"
-                    src="/bin.png"
-                    @click="deleteTest"
             />
         </v-btn>
         <v-btn class="right" color="secondary">
@@ -43,20 +36,12 @@
         @Prop() test!: Test;
         visible = true;
 
-        deleteTest(): void {
-            TestService.deleteTest(this.test.id).then(() => {
-                this.$router.push({path: `/`});
-            }).catch(reason => {
-                console.error("Reason: " + reason);
-            });
-        }
-
         link(): void {
             this.$router.push({path: `/send/${this.test.id}`});
         }
 
         results(): void {
-            this.$router.push({path: `/results/${this.test.id}`});
+            this.$router.push({path: `/result/teacher/${this.test.id}`});
         }
 
     }
@@ -76,9 +61,9 @@
         padding: 10px;
         display:inline-block;
         margin: 20px auto;
-        margin-right: 20px;
         float: right;
     }
+
 
     .comment {
         padding: 10px;
@@ -90,36 +75,7 @@
         display: flow-root;
     }
 
-    .test-name::before, .test-name::after {
+    .test-name::before, .deck-name::after {
         content: '';
-    }
-
-    .deck {
-        max-width: 600px;
-        padding: 10px;
-        margin: 20px auto;
-        display:inline-block;
-    }
-
-    .right {
-        max-width: 600px;
-        padding: 10px;
-        display:inline-block;
-        margin: 20px auto;
-        float: right;
-    }
-
-    .comment {
-        padding: 10px;
-        margin: 10px;
-    }
-
-    .actionBar {
-        width: 100%;
-        display: flow-root;
-    }
-
-    .deck-name::before, .deck-name::after {
-        content: '"';
     }
 </style>

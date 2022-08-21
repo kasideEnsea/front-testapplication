@@ -5,6 +5,10 @@ import NoValidView from "@/views/NoValidView/NoValidView.vue";
 import ValidView from "@/views/ValidView/ValidView.vue";
 import MainView from "@/views/MainView/MainView.vue";
 import TestView from "@/views/TestView/TestView.vue";
+import AddTestView from "@/views/AddTestView/AddTestView.vue";
+import StudentLinkView from "@/views/StudentLinkView/StudentLinkView.vue";
+import TestStudentView from "@/views/TestStudentView/TestStudentView.vue";
+import NoValidTestLinkView from "@/views/NoValidTestLinkView/NoValidTestLinkView.vue";
 const LoginView = () => import( "@/views/LoginView/LoginView.vue");
 const RegistrationView = () => import("@/views/RegistrationView/RegistrationView.vue");
 const PageNotFoundView = () => import( "@/views/PageNotFoundView/PageNotFoundView.vue");
@@ -32,17 +36,16 @@ const routes: RouteConfig[] = [
         component: RegistrationView
     },
     {
-        path: '/novalid',
-        name: 'NoValidView',
-        component: NoValidView,
-        meta: {
-            authorized: false
+        path: '/logout',
+        beforeEnter: (to, from, next) => {
+            SecurityService.clearToken();
+            next('/login');
         }
     },
     {
-        path: '/:userId?/:code?',
-        name: 'ValidView',
-        component: ValidView,
+        path: '/add/test',
+        name: 'AddTestView',
+        component: AddTestView
     },
     {
         path: '/test/:id?',
@@ -53,11 +56,70 @@ const routes: RouteConfig[] = [
         }
     },
     {
-        path: '/logout',
-        beforeEnter: (to, from, next) => {
-            SecurityService.clearToken();
-            next('/login');
+        path: '/send/:id?',
+        name: 'StudentLinkView',
+        component: StudentLinkView,
+        meta: {
+            authorized: false
         }
+    },
+    {
+        path: '/novalid',
+        name: 'NoValidView',
+        component: NoValidView,
+        meta: {
+            authorized: false
+        }
+    },
+    {
+        path: '/noValidTestLink',
+        name: 'NoValidTestLinkView',
+        component: NoValidTestLinkView,
+        meta: {
+            authorized: false
+        }
+    },
+    {
+        path: '/test/:code?',
+        name: 'TestStudentView',
+        component: TestStudentView,
+        meta: {
+            authorized: false
+        }
+    },
+    {
+        path: '/attempt/:code?',
+        name: 'AttemptStudentView',
+        component: AttemptStudentView,
+        meta: {
+            authorized: false
+        }
+    },
+    {
+        path: '/result/:code?',
+        name: 'ResultStudentView',
+        component: ResultStudentView,
+        meta: {
+            authorized: false
+        }
+    },
+    {
+        path: '/attempt/teacher/:id?',
+        name: 'AttemptStudentView',
+        component: AttemptTeacherView,
+    },
+    {
+        path: '/result/teacher/:id?',
+        name: 'ResultStudentView',
+        component: ResultTeacherView,
+        meta: {
+            authorized: true
+        }
+    },
+    {
+        path: '/:userId?/:code?',
+        name: 'ValidView',
+        component: ValidView,
     },
     {
         path: '/*',

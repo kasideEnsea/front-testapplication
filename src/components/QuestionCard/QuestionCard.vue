@@ -2,13 +2,14 @@
 <template>
     <v-card v-if="visible">
         <v-text-field
+                :label="$t('question')"
                 required
                 type="name"
                 v-model="question.text"
                 color="secondary"
-                :rules="[(v => !!v || $t('error.count_required'))]"
+                :rules="[(v => !!v || $t('error.text_required'))]"
         />
-        <v-btn class="right" color="secondary">
+        <v-btn color="secondary">
             <v-img
                     max-height="20"
                     max-width="20"
@@ -16,7 +17,7 @@
                     @click="deleteQuestion"
             />
         </v-btn>
-        <v-btn class="right" color="secondary">
+        <v-btn color="secondary">
             <v-img
                     max-height="20"
                     max-width="20"
@@ -25,8 +26,14 @@
             />
         </v-btn>
         <div v-for="opt in question.options" :key="opt.id">
-            <input type="checkbox" v-bind:value="opt" v-model="opt.isCorrect">
-            <label>{{opt.text}}</label><br>
+                <input type="checkbox" v-bind:value="opt" v-model="opt.isCorrect"><br>
+                <v-text-field class="inl"
+                        :label="$t('option')"
+                        required
+                        type="name"
+                        v-model="opt.text"
+                        color="secondary"
+                /><br>
         </div>
     </v-card>
 </template>
@@ -43,6 +50,7 @@
     })
     export default class TestCard extends SecurityMixin {
         @Prop() question!: Question;
+        @Prop() testId: number | undefined;
         visible = true;
         private option = new class implements Option {
             id = -1;
@@ -53,81 +61,42 @@
 
         deleteQuestion(): void {
             QuestionService.deleteQuestion(this.question.id).then(() => {
-                this.$router.push({path: `/test/${this.$route.params.testId}`});
-            }).catch((reason: string) => {
-                console.error("Reason: " + reason);
+                window.location.reload();
+                this.$router.push({path: `/test/${this.testId}`}).catch (reason => {console.log("reason " + reason)});
             });
         }
 
         addEmptyOption(): void {
-            this.option.questionId = this.question.id;
+            this.question.options.push(new class implements Option {
+                id = -1;
+                questionId = -1;
+                text = "";
+                isCorrect = false;
+            });
+            /*this.option.questionId = this.question.id;
             QuestionService.addOption(this.option, this.question.id).then(() => {
                 this.$router.push({path: `/test/${this.$route.params.testId}`});
             }).catch((reason: string) => {
                 console.error("Reason: " + reason);
-            });
+            });*/
         }
 
     }
 </script>
 
 <style scoped>
-    .test {
-        max-width: 600px;
-        padding: 10px;
-        margin: 20px auto;
-        display:inline-block;
-    }
 
     .right {
         max-width: 600px;
-        padding: 10px;
+        padding: 20px;
         display:inline-block;
-        margin: 20px auto;
-        margin-right: 20px;
+        margin: 40px auto;
         float: right;
+        margin-right: 10px;
     }
 
-    .comment {
-        padding: 10px;
-        margin: 10px;
-    }
-
-    .actionBar {
-        width: 100%;
-        display: flow-root;
-    }
-
-    .test-name::before, .test-name::after {
-        content: '';
-    }
-
-    .deck {
-        max-width: 600px;
-        padding: 10px;
-        margin: 20px auto;
-        display:inline-block;
-    }
-
-    .right {
-        max-width: 600px;
-        padding: 10px;
-        display:inline-block;
-        margin: 20px auto;
-        float: right;
-    }
-
-    .comment {
-        padding: 10px;
-        margin: 10px;
-    }
-
-    .actionBar {
-        width: 100%;
-        display: flow-root;
-    }
-
-    .deck-name::before, .deck-name::after {
-        content: '"';
+    .inl {
+        display: inline;
+        padding-left: 10px;
     }
 </style>
