@@ -1,4 +1,4 @@
-<i18n src="./NoValidView.yaml"/>
+<i18n src="./NoValidTestLinkView.yaml"/>
 <template>
     <v-container>
         <v-row class="text-center">

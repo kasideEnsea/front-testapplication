@@ -2,37 +2,27 @@
 <template>
     <div class="mx-auto fh" style="max-width: 1000px;">
         <h1>{{$t('title')}}</h1>
-        <test-list v-if="feedPromise" :tests="feedPromise"/>
-        <v-btn
-                @click="addTest"
-                class="white--text"
-                color="primary"
-                raised>
-            {{$t('add')}}
-        </v-btn>
+        <teacher-result-list v-if="feedPromise" :tests="feedPromise"/>
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator";
     import {TitleService} from "@/services/TitleService";
-    import TestList from "@/components/TestList/TestList.vue";
-    import {Test} from "@/models/Test";
-    import {TestService} from "@/services/TestService";
+    import {CheckedTest} from "@/models/CheckedTest";
+    import TeacherResultList from "@/components/TeacherResultList/TeacherResultList.vue";
+    import {ResultService} from "@/services/ResultService";
+    import StudentResultList from "@/components/StudentResultList/StudentResultList.vue";
 
     @Component({
-        components: {TestList}
+        components: {TeacherResultList}
     })
     export default class ResultTeacherView extends Vue {
-        tests: Test[] = [];
-        feedPromise: Promise<Test[]> | null = null;
-
-        addTest(): void {
-            this.$router.push({ path: `/add/test` });
-        }
+        feedPromise: Promise<CheckedTest[]> | null = null;
 
         created() {
-            this.feedPromise = TestService.getTests();
+            const testId = +this.$route.params.id;
+            this.feedPromise = ResultService.getAllByTestId(testId);
             this.setTitle();
         }
 

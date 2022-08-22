@@ -1,17 +1,17 @@
+import {State} from "@/enum/State";
 <i18n src="./TestStudentView.yaml"/>
 <template>
     <div class="mx-auto fh" style="max-width: 1000px;">
-        <div v-if="visible">
-            <v-label>{{options.name}}</v-label>
-            <empty-question-list v-if="options" :questions="options.questions" :test-id="options.id"/>
-            <v-btn
-                    @click="save"
-                    class="white--text"
-                    color="primary"
-                    raised>
-                {{$t('save')}}
-            </v-btn>
-        </div>
+        <h1>{{options.name}}</h1>
+        <student-list class="space_above" v-if="options.questions" :questions="options.questions"/>
+        <v-btn
+                @click="save"
+                class="white--text"
+                color="primary"
+                raised>
+            {{$t('save')}}
+        </v-btn>
+
         <v-alert type="info" v-if="isLoading">
             {{$t('loading')}}
         </v-alert>
@@ -21,17 +21,17 @@
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator";
     import {TitleService} from "@/services/TitleService";
-    import {Test} from "@/models/Test";
-    import {TestService} from "@/services/TestService";
+    import CardList from "@/components/CardList/CardList.vue";
+    import StudentList from "@/components/StudentList/StudentList.vue";
     import {Question} from "@/models/Question";
-    import {Option} from "@/models/Option";
+    import {Test} from "@/models/Test";
     import {State} from "@/enum/State";
     import {StudentLinkService} from "@/services/StudentLinkService";
-    import {ValidOptions} from "@/models/ValidOptions";
-    import EmptyQuestionList from "@/components/EmptyQuestionList/EmptyQuestionList.vue";
+    import {ResultService} from "@/services/ResultService";
+
 
     @Component({
-        components: {EmptyQuestionList}
+        components: {StudentList}
     })
     export default class TestStudentView extends Vue {
         private state = State.None;
@@ -41,33 +41,10 @@
             name = "";
             questions: Question[] = [];
         };
-        private validOptions = new class implements ValidOptions {
-            id = 0;
-            code = "";
-        };
-
-        save(): void {
-            this.state = State.Loading;
-            this.validOptions.id = +this.$route.params.id;
-            this.validOptions.code = this.$route.params.code;
-            StudentLinkService.getTest(this.validOptions).then(value => {
-                this.options.id = value.id;
-                this.options.name = value.name;
-                this.options.questions = value.questions;
-                this.state = State.None;
-                this.visible = true;
-            }).catch(reason => {
-                console.error(reason);
-            });
-            this.setTitle();
-            this.$router.push({path: `/`});
-        }
 
         created() {
             this.state = State.Loading;
-            this.validOptions.id = +this.$route.params.id;
-            this.validOptions.code = this.$route.params.code;
-            StudentLinkService.getTest(this.validOptions).then(value => {
+            StudentLinkService.getTest(this.$route.params.code).then(value => {
                 this.options.id = value.id;
                 this.options.name = value.name;
                 this.options.questions = value.questions;
@@ -75,8 +52,14 @@
                 this.visible = true;
             }).catch(reason => {
                 console.error(reason);
+                this.$router.push({path: `/noValidTestLink`});
             });
             this.setTitle();
+        }
+
+        save(): void {
+            ResultService.saveAttempt(this.options, this.$route.params.code);
+            this.$router.push({path: `/attempt/${this.$route.params.code}`});
         }
 
         @Watch("$i18n.locale")
@@ -92,12 +75,23 @@
 </script>
 
 <style scoped>
-    .right {
-        max-width: 600px;
-        padding: 10px;
-        display:inline-block;
-        margin: 20px auto;
-        margin-right: 20px;
-        float: right;
+    .fh {
+        height: auto;
+    }
+</style>
+
+<style>
+    /*Fixes shade blinking bug*/
+    /*noinspection CssUnusedSymbol*/
+    .v-window__container--is-active {
+        height: auto !important;
+    }
+
+    .radio {
+        padding: 5px;
+    }
+
+    .space_above {
+        margin-top: 20px;
     }
 </style>

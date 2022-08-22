@@ -1,17 +1,16 @@
 <i18n src="./AttemptTeacherView.yaml"/>
 <template>
     <div class="mx-auto fh" style="max-width: 1000px;">
-        <div v-if="visible">
-            <v-label>{{options.name}}</v-label>
-            <empty-question-list v-if="options" :questions="options.questions" :test-id="options.id"/>
-            <v-btn
-                    @click="save"
-                    class="white--text"
-                    color="primary"
-                    raised>
-                {{$t('save')}}
-            </v-btn>
-        </div>
+        <h1>{{$t('test')}} {{options.name}}</h1><br>
+        <h2>{{$t('email')}} {{options.email}}</h2><br>
+        <checked-question-list v-if="options.questions" :questions="options.questions"/>
+        <v-btn
+                @click="showAll"
+                class="white--text"
+                color="primary"
+                raised>
+            {{$t('show')}}
+        </v-btn>
         <v-alert type="info" v-if="isLoading">
             {{$t('loading')}}
         </v-alert>
@@ -21,56 +20,45 @@
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator";
     import {TitleService} from "@/services/TitleService";
-    import {Test} from "@/models/Test";
-    import {TestService} from "@/services/TestService";
-    import {Question} from "@/models/Question";
-    import {Option} from "@/models/Option";
     import {State} from "@/enum/State";
-    import {StudentLinkService} from "@/services/StudentLinkService";
-    import {ValidOptions} from "@/models/ValidOptions";
-    import EmptyQuestionList from "@/components/EmptyQuestionList/EmptyQuestionList.vue";
+    import {ResultService} from "@/services/ResultService";
+    import {CheckedTest} from "@/models/CheckedTest";
+    import {CheckedQuestion} from "@/models/CheckedQuestion";
+    import CheckedQuestionList from "@/components/CheckedQuestionList/CheckedQuestionList.vue";
+    import {StringDto} from "@/models/StringDto";
 
     @Component({
-        components: {EmptyQuestionList}
+        components: {CheckedQuestionList}
     })
     export default class AttemptTeacherView extends Vue {
         private state = State.None;
         private visible = false;
-        private options = new class implements Test {
+        private options = new class implements CheckedTest {
             id = 0;
             name = "";
-            questions: Question[] = [];
+            questions: CheckedQuestion[] = [];
+            email = "";
+            countOfRightAnswers = 0;
+            linkId = 0;
         };
-        private validOptions = new class implements ValidOptions {
-            id = 0;
-            code = "";
+        private emailDto = new class implements StringDto {
+            str = "";
         };
 
-        save(): void {
-            this.state = State.Loading;
-            this.validOptions.id = +this.$route.params.id;
-            this.validOptions.code = this.$route.params.code;
-            StudentLinkService.getTest(this.validOptions).then(value => {
-                this.options.id = value.id;
-                this.options.name = value.name;
-                this.options.questions = value.questions;
-                this.state = State.None;
-                this.visible = true;
-            }).catch(reason => {
-                console.error(reason);
-            });
-            this.setTitle();
-            this.$router.push({path: `/`});
+        showAll(): void {
+            this.$router.push({path: `/result/teacher/${this.$route.params.id}`});
         }
 
         created() {
             this.state = State.Loading;
-            this.validOptions.id = +this.$route.params.id;
-            this.validOptions.code = this.$route.params.code;
-            StudentLinkService.getTest(this.validOptions).then(value => {
+            const id = +this.$route.params.linkId;
+            ResultService.getCheckedTestByLinkId(id).then(value => {
                 this.options.id = value.id;
                 this.options.name = value.name;
                 this.options.questions = value.questions;
+                this.options.email = value.email;
+                this.options.countOfRightAnswers = value.countOfRightAnswers;
+                this.options.linkId = 0;
                 this.state = State.None;
                 this.visible = true;
             }).catch(reason => {
@@ -95,7 +83,7 @@
     .right {
         max-width: 600px;
         padding: 10px;
-        display:inline-block;
+        display: inline-block;
         margin: 20px auto;
         margin-right: 20px;
         float: right;

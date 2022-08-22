@@ -5,6 +5,7 @@
             <input type="checkbox" v-bind:value="opt" v-model="opt.isCorrect">
             <v-label>{{opt.text}}</v-label><br>
         </div>
+        <br>
     </v-card>
 </template>
 
@@ -16,7 +17,7 @@
     @Component({
 
     })
-    export default class EmptyQuestionCard extends SecurityMixin {
+    export default class StudentCard extends SecurityMixin {
         @Prop() question!: Question;
         visible = true;
     }

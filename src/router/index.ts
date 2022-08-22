@@ -84,7 +84,7 @@ const routes: RouteConfig[] = [
         }
     },
     {
-        path: '/test/:code?',
+        path: '/begintest/:code?',
         name: 'TestStudentView',
         component: TestStudentView,
         meta: {
@@ -108,8 +108,8 @@ const routes: RouteConfig[] = [
         }
     },
     {
-        path: '/attempt/teacher/:id?',
-        name: 'AttemptStudentView',
+        path: '/attempt/teacher/:linkId?',
+        name: 'AttemptTeacherView',
         component: AttemptTeacherView,
     },
     {
@@ -121,7 +121,7 @@ const routes: RouteConfig[] = [
         }
     },
     {
-        path: '/:userId?/:code?',
+        path: '/postCheck/:userId?/:code?',
         name: 'ValidView',
         component: ValidView,
     },

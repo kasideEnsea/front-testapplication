@@ -22,12 +22,7 @@
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator";
     import {TitleService} from "@/services/TitleService";
-    import TestList from "@/components/TestList/TestList.vue";
-    import {Test} from "@/models/Test";
-    import {TestService} from "@/services/TestService";
-    import {Question} from "@/models/Question";
     import {StudentLinkService} from "@/services/StudentLinkService";
-    import {RegistrationOptions} from "@/models/RegistrationOptions";
     import {EmailList} from "@/models/EmailList";
 
     @Component({

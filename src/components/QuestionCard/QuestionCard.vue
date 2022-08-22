@@ -48,9 +48,9 @@
     @Component({
 
     })
-    export default class TestCard extends SecurityMixin {
-        @Prop() question!: Question;
+    export default class QuestionCard extends SecurityMixin {
         @Prop() testId: number | undefined;
+        @Prop() question!: Question;
         visible = true;
         private option = new class implements Option {
             id = -1;

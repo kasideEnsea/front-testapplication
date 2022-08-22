@@ -1,9 +1,9 @@
 import {State} from "@/enum/State";
-<i18n src="./TestList.yaml"/>
+<i18n src="./TeacherResultList.yaml"/>
 <template>
     <div style="max-width: 800px">
         <template v-if="data && tests">
-            <test-card :test="test" :key="test.id" v-for="test in data"/>
+            <teacher-result-card :test="test" :key="test.id" v-for="test in data"/>
         </template>
         <p v-if="isSuccess && !data.length">
             {{$t('nothing_found')}}
@@ -23,19 +23,19 @@ import {State} from "@/enum/State";
 <script lang="ts">
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import {State} from "@/enum/State";
-    import TestCard from "@/components/TestCard/TestCard.vue";
-    import {Test} from "@/models/Test";
+    import {CheckedTest} from "@/models/CheckedTest";
+    import TeacherResultCard from "@/components/TeacherResultCard/TeacherResultCard.vue";
 
     @Component({
-        components: {TestCard}
+        components: {TeacherResultCard}
     })
-    export default class TestList extends Vue {
+    export default class TeacherResultList extends Vue {
         state: State = State.None;
-        data: Test[] | null = null;
+        data: CheckedTest[] | null = null;
         page = 1;
         toLoad = 1;
         totalPages = 0;
-        @Prop() tests!: Promise<Test[]>;
+        @Prop() tests!: Promise<CheckedTest[]>;
         get isLoading(): boolean {
             return this.state == State.Loading;
         }

@@ -1,8 +1,9 @@
-<i18n src="./QuestionList.yaml"/>
+import {State} from "@/enum/State";
+<i18n src="./StudentResultList.yaml"/>
 <template>
     <div style="max-width: 800px">
-        <template v-if="questions">
-            <empty-question-card :question="question" :key="question.id" v-for="question in questions"/>
+        <template v-if="data && tests">
+            <student-result-card :test="test" :key="test.id" v-for="test in data"/>
         </template>
         <p v-if="isSuccess && !data.length">
             {{$t('nothing_found')}}
@@ -22,19 +23,21 @@
 <script lang="ts">
     import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import {State} from "@/enum/State";
-    import {Question} from "@/models/Question";
-    import EmptyQuestionCard from "@/components/EmptyQuestionCard/EmptyQuestionCard.vue";
-
+    import TestCard from "@/components/TestCard/TestCard.vue";
+    import {Test} from "@/models/Test";
+    import StudentResultCard from "@/components/StudentResultCard/StudentResultCard.vue";
+    import {CheckedTest} from "@/models/CheckedTest";
 
     @Component({
-        components: {EmptyQuestionCard}
+        components: {StudentResultCard}
     })
-    export default class EmptyQuestionList extends Vue {
+    export default class StudentResultList extends Vue {
         state: State = State.None;
+        data: Test[] | null = null;
         page = 1;
         toLoad = 1;
         totalPages = 0;
-        @Prop() questions!: Question[];
+        @Prop() tests!: Promise<CheckedTest[]>;
         get isLoading(): boolean {
             return this.state == State.Loading;
         }
@@ -53,7 +56,7 @@
 
         @Watch("page")
         private pageChanged(): void {
-            this.questions = [];
+            this.data = null;
             this.toLoad = this.page;
             this.load()
         }
@@ -69,10 +72,15 @@
         }
 
         private load(): void {
-            if (this.questions.length){
+            this.state = State.Loading;
+            this.tests.then(value => {
+                this.data = value;
                 this.totalPages = 1;
                 this.state = State.Success;
-            }
+            }).catch(reason => {
+                console.error("Reason: " + reason);
+                this.state = State.Error;
+            });
         }
     }
 </script>

@@ -1,62 +1,67 @@
+import {State} from "@/enum/State";
 <i18n src="./TestView.yaml"/>
 <template>
     <div class="mx-auto fh" style="max-width: 1000px;">
-        <v-text-field
-                :label="$t('name')"
-                required
-                type="name"
-                v-model="options.name"
-                color="secondary"
-                :rules="[(v => !!v || $t('error.name_required'))]"
-        />
-        <v-btn class="right" color="secondary">
-            <v-img
-                    max-height="20"
-                    max-width="20"
-                    src="/plus.png"
-                    @click="addQuestion"
+        <div v-if="visible">
+            <v-text-field
+                    :label="$t('name')"
+                    required
+                    type="name"
+                    v-model="options.name"
+                    color="secondary"
+                    :rules="[(v => !!v || $t('error.name_required'))]"
             />
-        </v-btn>
-        <question-list v-if="options" :questions="options.questions" :test-id="options.id"/>
-        <v-btn
-                @click="save"
-                class="white--text"
-                color="primary"
-                raised>
-            {{$t('save')}}
-        </v-btn>
-        <v-btn
-                @click="deleteTest"
-                class="white--text"
-                color="error"
-                raised>
-            {{$t('delete')}}
-        </v-btn>
+            <v-btn class="right" color="secondary">
+                <v-img
+                        max-height="20"
+                        max-width="20"
+                        src="/plus.png"
+                        @click="addQuestion"
+                />
+            </v-btn>
+            <question-list class="space_above" v-if="options.questions" :test-id="options.id" :questions="options.questions"/>
+            <v-btn
+                    @click="save"
+                    class="white--text"
+                    color="primary"
+                    raised>
+                {{$t('save')}}
+            </v-btn>
+            <v-btn
+                    @click="deleteTest"
+                    class="white--text"
+                    color="error"
+                    raised>
+                {{$t('delete')}}
+            </v-btn>
+        </div>
+        <v-alert type="info" v-if="isLoading">
+            {{$t('loading')}}
+        </v-alert>
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue, Watch} from "vue-property-decorator";
     import {TitleService} from "@/services/TitleService";
+    import QuestionList from "@/components/QuestionList/QuestionList.vue";
+    import {State} from "@/enum/State";
+    import {Question} from "@/models/Question";
     import {Test} from "@/models/Test";
     import {TestService} from "@/services/TestService";
-    import QuestionList from "@/components/QuestionList/QuestionList.vue";
-    import {Question} from "@/models/Question";
     import {Option} from "@/models/Option";
+
 
     @Component({
         components: {QuestionList}
     })
     export default class TestView extends Vue {
+        private state = State.None;
+        private visible = false;
         private options = new class implements Test {
             id = -1;
             name = "";
             questions: Question[] = [];
-        };
-        private newQuestion = new class implements Question {
-            id = -1;
-            text = "";
-            options: Option[] = [];
         };
 
         addQuestion(): void {
@@ -65,9 +70,22 @@
                 text = "";
                 options: Option[] = [];
             });
-            /*const testId = +this.$route.params.testId;
-            QuestionService.addQuestion(this.newQuestion, testId);
-            this.$router.push({ path: `/test/${this.$route.params.testId}` });*/
+        }
+
+        created() {
+            this.state = State.Loading;
+            const testId = +this.$route.params.id;
+            TestService.getTest(testId).then(value => {
+                this.options.id = value.id;
+                this.options.name = value.name;
+                this.options.questions = value.questions;
+                this.state = State.None;
+                this.visible = true;
+            }).catch(reason => {
+                console.error(reason);
+                this.$router.push({path: `/*`});
+            });
+            this.setTitle();
         }
 
         save(): void {
@@ -84,18 +102,6 @@
             });
         }
 
-        created() {
-            const testId = +this.$route.params.id;
-            TestService.getTest(testId).then(value => {
-                this.options.id = value.id;
-                this.options.name = value.name;
-                this.options.questions = value.questions;
-
-            }).catch(reason => {
-                console.error(reason);
-            });
-            this.setTitle();
-        }
 
         @Watch("$i18n.locale")
         private setTitle() {
@@ -106,12 +112,23 @@
 </script>
 
 <style scoped>
-    .right {
-        max-width: 600px;
-        padding: 10px;
-        display:inline-block;
-        margin: 20px auto;
-        margin-right: 20px;
-        float: right;
+    .fh {
+        height: auto;
+    }
+</style>
+
+<style>
+    /*Fixes shade blinking bug*/
+    /*noinspection CssUnusedSymbol*/
+    .v-window__container--is-active {
+        height: auto !important;
+    }
+
+    .radio {
+        padding: 5px;
+    }
+
+    .space_above {
+        margin-top: 20px;
     }
 </style>

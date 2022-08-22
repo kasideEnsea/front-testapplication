@@ -37,10 +37,7 @@
     import {TestService} from "@/services/TestService";
     import QuestionList from "@/components/QuestionList/QuestionList.vue";
     import {Question} from "@/models/Question";
-    import {Option} from "@/models/Option";
-    import {QuestionService} from "@/services/QService";
     import {State} from "@/enum/State";
-    import {AuthService} from "@/security/AuthService";
 
     @Component({
         components: {QuestionList}

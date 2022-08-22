@@ -1,6 +1,5 @@
 <template>
     <v-card v-if="visible">
-        <v-label class="deck-name">{{card.front_word}}</v-label>
         <span class="test">
             <router-link :to="`/test/${test.id}`" class="test-name">{{test.name}}</router-link>
         </span>
@@ -27,7 +26,6 @@
     import {Component, Prop} from "vue-property-decorator";
     import SecurityMixin from "@/security/SecurityMixin";
     import { Test } from '@/models/Test';
-    import {TestService} from "@/services/TestService";
 
     @Component({
 
